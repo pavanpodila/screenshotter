@@ -17,7 +17,7 @@ async function main() {
 
   async function takeScreenshot() {
     try {
-      const timestamp = `${new Date().toDateString()}, ${new Date().toLocaleTimeString()}`;
+      const timestamp = getTimestamp();
       const filename = path.resolve(options.directory, `screenshot-${timestamp}.jpg`);
       await screenshot({ filename, format: 'jpg' });
 
@@ -26,6 +26,14 @@ async function main() {
       console.log('Failed to capture');
     }
   }
+}
+
+function getTimestamp() {
+  const date = new Date();
+
+  return `${date.getFullYear()}-${
+    date.getMonth() + 1
+  }-${date.getDate()}_${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
 }
 
 function getOptions() {
