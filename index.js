@@ -4,13 +4,12 @@ const mkdir = require('util').promisify(require('fs').mkdir);
 
 const options = getOptions();
 
-console.log(`Using directory=${options.directory}, interval=${options.interval}, startCounter=${options.startCounter}`);
+console.log(`Using directory=${options.directory}, interval=${options.interval}`);
 
 main();
 
 async function main() {
   const interval = Number(options.interval) * 60 * 1000;
-  let counter = Number(options.startCounter);
   await mkdir(options.directory, { recursive: true });
 
   takeScreenshot(); // kick off with the first one
@@ -18,9 +17,9 @@ async function main() {
 
   async function takeScreenshot() {
     try {
-      const filename = path.resolve(options.directory, `screenshot-${counter}.jpg`);
+      const timestamp = `${new Date().toDateString()}, ${new Date().toLocaleTimeString()}`;
+      const filename = path.resolve(options.directory, `screenshot-${timestamp}.jpg`);
       await screenshot({ filename, format: 'jpg' });
-      counter++;
 
       console.log(`[${new Date().toLocaleString()}] ${filename}`);
     } catch (e) {
@@ -32,6 +31,6 @@ async function main() {
 function getOptions() {
   const userOptions = require('minimist')(process.argv.slice(2));
 
-  const defaults = { directory: './screenshots', interval: 5, startCounter: 1 };
+  const defaults = { directory: './screenshots', interval: 5 };
   return { ...defaults, ...userOptions };
 }
