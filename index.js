@@ -1,30 +1,37 @@
-const util = require('util');
-const screenshot = util.promisify(require('desktop-screenshot'));
+const screenshot = require('screenshot-desktop');
 const path = require('path');
+const mkdir = require('util').promisify(require('fs').mkdir);
 
-const userOptions = require('minimist')(process.argv.slice(2));
+const options = getOptions();
 
-const defaults = { directory: './screenshots', interval: 5 };
-const options = { ...defaults, ...userOptions };
-
-console.log(options);
-console.log(`Using directory=${options.directory}, interval=${options.interval}`);
+console.log(`Using directory=${options.directory}, interval=${options.interval}, startCounter=${options.startCounter}`);
 
 main();
 
 async function main() {
   const interval = Number(options.interval) * 60 * 1000;
-  let counter = 1;
+  let counter = Number(options.startCounter);
+  await mkdir(options.directory, { recursive: true });
 
-  setInterval(async () => {
+  takeScreenshot(); // kick off with the first one
+  setInterval(takeScreenshot, interval);
+
+  async function takeScreenshot() {
     try {
       const filename = path.resolve(options.directory, `screenshot-${counter}.jpg`);
-      await screenshot(filename, { width: 1280, quality: 100 });
+      await screenshot({ filename, format: 'jpg' });
       counter++;
 
-      console.log(`Saved ${filename}`);
+      console.log(`[${new Date().toLocaleString()}] ${filename}`);
     } catch (e) {
       console.log('Failed to capture');
     }
-  }, interval);
+  }
+}
+
+function getOptions() {
+  const userOptions = require('minimist')(process.argv.slice(2));
+
+  const defaults = { directory: './screenshots', interval: 5, startCounter: 1 };
+  return { ...defaults, ...userOptions };
 }

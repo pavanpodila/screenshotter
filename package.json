@@ -4,15 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js --interval 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "commander": "^7.0.0",
-    "desktop-screenshot": "^0.1.1",
     "minimist": "^0.0.8",
-    "prettier": "^2.2.1"
+    "prettier": "^2.2.1",
+    "screenshot-desktop": "^1.12.3"
   }
 }
